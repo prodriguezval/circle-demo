@@ -11,15 +11,15 @@ jobs:
           name: "Compiling"
           command: |
             ./mvnw clean compile
-    Test:
-      docker:
-        - image: circleci/openjdk:8u171-jdk
-      steps:
-        - checkout
-        - run:
-            name: "Testing"
-            command: |
-              ./mvnw clean test
+  Test:
+    docker:
+      - image: circleci/openjdk:8u171-jdk
+    steps:
+      - checkout
+      - run:
+          name: "Testing"
+          command: |
+            ./mvnw clean test
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
