@@ -1,0 +1,31 @@
+# Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
+version: 2.1
+
+jobs:
+  Compile:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - test:
+          name: "Compile"
+          command: |
+            ./mvnw clean compile
+  Test:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - test:
+          name: "Test"
+          command: |
+            ./mvnw clean test
+
+# Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
+workflows:
+  CI:
+    jobs:
+      - Compile
+      - Test:
+          requires:
+            - Compile
