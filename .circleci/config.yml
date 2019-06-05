@@ -7,7 +7,7 @@ jobs:
       - image: circleci/openjdk:8-jdk
     steps:
       - checkout
-      - test:
+      - run:
           name: "Compile"
           command: |
             ./mvnw clean compile
@@ -16,7 +16,7 @@ jobs:
       - image: circleci/openjdk:8-jdk
     steps:
       - checkout
-      - test:
+      - run:
           name: "Test"
           command: |
             ./mvnw clean test
