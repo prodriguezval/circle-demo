@@ -2,16 +2,31 @@
 version: 2.1
 
 jobs:
-  build:
+  Compile:
     docker:
       - image: circleci/openjdk:8u171-jdk
     steps:
       - checkout
       - run:
-          name: "Compile"
+          name: "Compiling"
           command: |
             ./mvnw clean compile
-      - run:
-          name: "Test"
-          command: |
-            ./mvnw clean test
+    Test:
+      docker:
+        - image: circleci/openjdk:8u171-jdk
+      steps:
+        - checkout
+        - run:
+            name: "Testing"
+            command: |
+              ./mvnw clean test
+
+# Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
+workflows:
+  version: 2
+  CI:
+    jobs:
+      - Compile
+      - Test:
+          requires:
+            - Compile
