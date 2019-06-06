@@ -3,8 +3,6 @@ version: 2.1
 
 executors:
   docker-builder:
-    environment:
-      IMAGE_NAME: "${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BUILD_NUM}"
     docker:
       - image: circleci/buildpack-deps:stretch
 
@@ -16,10 +14,10 @@ jobs:
       - setup_remote_docker
       - run:
           name: "Building project image"
-          command: "docker build -t ${IMAGE_NAME} ."
+          command: "docker build -t ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BUILD_NUM} ."
       - run:
           name: "Archive Docker image"
-          command: "docker save -o image.tar ${IMAGE_NAME}"
+          command: "docker save -o image.tar ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BUILD_NUM}"
       - persist_to_workspace:
           root: .
           paths:
@@ -35,7 +33,7 @@ jobs:
           command: "docker load -i /tmp/workspace/image.tar"
       - run:
           name: "Compiling"
-          command: "docker run ${IMAGE_NAME} ./mvnw clean compile"
+          command: "docker run ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BUILD_NUM} ./mvnw clean compile"
   Test:
     executor: docker-builder
     steps:
@@ -47,7 +45,7 @@ jobs:
           command: "docker load -i /tmp/workspace/image.tar"
       - run:
           name: "Testing"
-          command: "docker run ${IMAGE_NAME} ./mvnw clean test"
+          command: "docker run ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BUILD_NUM} ./mvnw clean test"
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
