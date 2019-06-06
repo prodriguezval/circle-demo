@@ -5,6 +5,6 @@ RUN mkdir app
 ADD . /app
 
 WORKDIR /app
-RUN ./mvnw clean compile
+RUN ./mvnw compiler:compile && ./mvnw compiler:testCompile
 
 CMD ["./mvnw", "spring-boot:run"]
