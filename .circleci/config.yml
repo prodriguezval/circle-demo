@@ -3,7 +3,7 @@ version: 2.1
 
 jobs:
   BuildImage:
-    machine:
+    machine: true
     steps:
       - checkout
       - run:
