@@ -1,7 +1,5 @@
 # Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
 version: 2.1
-orbs:
-  heroku: circleci/heroku@0.0.8
 executors:
   docker-builder:
     docker:
@@ -49,11 +47,13 @@ jobs:
           command: "docker run ${CIRCLE_PROJECT_REPONAME}:latest ./mvnw clean test"
 
   Package:
-    executor: heroku/default
+    executor: docker-builder
     steps:
       - checkout
       - setup_remote_docker
-      - heroku/install
+      - run:
+          name: "Install Heroku"
+          command: "curl https://cli-assets.heroku.com/install.sh | sh"
       - run:
           name: "Renaming Dockerfile"
           command: "mv Dockerfile.runtime Dockerfile"
@@ -61,15 +61,14 @@ jobs:
           name: "Logging to heroku container registry"
           command: "heroku container:login"
       - run:
-          name: "Load archived Docker image"
-          command: "docker load -i /tmp/workspace/prod-image.tar.tar"
-      - run:
           name: "pushing image in to heroku registry"
           command: "heroku container:push web -a ${HEROKU_APP_NAME}"
   Deploy:
-    executor: heroku/default
+    executor: docker-builder
     steps:
-      - heroku/install
+      - run:
+          name: "Install Heroku"
+          command: "curl https://cli-assets.heroku.com/install.sh | sh"
       - run:
           name: "Logging to heroku container registry"
           command: "heroku container:login"
