@@ -1,6 +1,7 @@
 # Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
 version: 2.1
-
+orbs:
+  heroku: circleci/heroku@1.0.0
 executors:
   docker-builder:
     docker:
@@ -47,6 +48,34 @@ jobs:
           name: "Testing"
           command: "docker run ${CIRCLE_PROJECT_REPONAME}:latest ./mvnw clean test"
 
+  Package:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - run:
+          name: "Renaming Dockerfile"
+          command: "mv Dockerfile.runtime Dockerfile"
+      - run:
+          name: "Logging to heroku container registry"
+          command: "heroku container:login"
+      - run:
+          name: "Load archived Docker image"
+          command: "docker load -i /tmp/workspace/prod-image.tar.tar"
+      - run:
+          name: "pushing image in to heroku registry"
+          command: "heroku container:push web -a ${HEROKU_APP_NAME}"
+  Deploy:
+    executor: heroku/default
+    steps:
+      - heroku/install
+      - run:
+          name: "Logging to heroku container registry"
+          command: "heroku container:login"
+      - run:
+          name: "Releasing the newest image in the registry"
+          command: "heroku container:release web -a ${HEROKU_APP_NAME}"
+
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
   version: 2
@@ -59,3 +88,12 @@ workflows:
       - Test:
           requires:
             - Compile
+      - Package:
+          requires:
+            - Test
+      - Deploy:
+          requires:
+            - Package
+          filters:
+            branches:
+              only: master
