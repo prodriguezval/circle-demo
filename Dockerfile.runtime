@@ -11,5 +11,5 @@ RUN cp -fr /app/target/*.jar /app/target/app.jar
 FROM adoptopenjdk:8u212-b03-jre-hotspot
 WORKDIR /root/
 COPY --from=builder /app/target/app.jar .
-docke
+
 CMD ["java", "-jar", "app.jar"]
