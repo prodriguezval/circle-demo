@@ -66,6 +66,7 @@ jobs:
   Deploy:
     executor: docker-builder
     steps:
+      - setup_remote_docker
       - run:
           name: "Install Heroku"
           command: "curl https://cli-assets.heroku.com/install.sh | sh"
