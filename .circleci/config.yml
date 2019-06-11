@@ -74,7 +74,7 @@ jobs:
           command: "docker load -i /tmp/workspace/image.tar"
       - run:
           name: "Packaging application"
-          command: "docker run  -v $PWD:/app-artifact ${CIRCLE_PROJECT_REPONAME}:latest ./mvnw clean package -Dmaven.test.skip=true  && mv /app/target/ /app-artifact"
+          command: "docker run  -v $PWD:/app-artifact ${CIRCLE_PROJECT_REPONAME}:latest ./mvnw clean package -Dmaven.test.skip=true && cp -R /app/target/ /app-artifact"
       - run:
           name: "Running security checks"
           command:  "cd app-artifact && docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
