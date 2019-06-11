@@ -79,8 +79,8 @@ jobs:
           name: "Running security checks"
           command: |
             docker create -v /application --name app alpine:3.4 /bin/true
-            docker cp app/ app:/application
-            docker run --rm --volumes-from app bash -c 'ls -la / && ls -la /application && hawkeyesec/scanner-cli -t /application'
+            docker cp app/. app:/application
+            docker run --rm --volumes-from app bash -c 'ls -la /application && hawkeyesec/scanner-cli -t /application'
   Deploy:
     executor: docker-builder
     steps:
