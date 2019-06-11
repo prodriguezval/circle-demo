@@ -74,10 +74,10 @@ jobs:
           command: "docker load -i /tmp/workspace/image.tar"
       - run:
           name: "Packaging application"
-          command: "docker run  -v $PWD:/app ${CIRCLE_PROJECT_REPONAME}:latest ./mvnw clean package -Dmaven.test.skip=true"
+          command: "docker run  -v $PWD:/app-artifact ${CIRCLE_PROJECT_REPONAME}:latest ./mvnw clean package -Dmaven.test.skip=true  && mv target/ /app-artifact"
       - run:
           name: "Running security checks"
-          command:  "docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
+          command:  "cd app-artifact && docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
   Deploy:
     executor: docker-builder
     steps:
