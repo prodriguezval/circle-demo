@@ -112,11 +112,10 @@ workflows:
             - Test
       - Security:
           requires:
-            - Test
+            - Package
       - Deploy:
           requires:
             - Security
-            - Package
           filters:
             branches:
               only: master
