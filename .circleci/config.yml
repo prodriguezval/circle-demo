@@ -63,6 +63,17 @@ jobs:
       - run:
           name: "pushing image in to heroku registry"
           command: "heroku container:push web -a ${HEROKU_APP_NAME}"
+  Security:
+    executor: docker-builder
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: "Packaging application"
+          command: "docker run ${CIRCLE_PROJECT_REPONAME}:latest -v $PWD:/app ./mvnw clean package -Dmaven.test.skip=true"
+      - run:
+          name: "Running security checks"
+          command:  "docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
   Deploy:
     executor: docker-builder
     steps:
@@ -90,6 +101,9 @@ workflows:
           requires:
             - Compile
       - Package:
+          requires:
+            - Test
+      - Security:
           requires:
             - Test
       - Deploy:

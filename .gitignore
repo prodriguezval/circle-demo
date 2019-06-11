@@ -27,3 +27,7 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+#### Hawkeye security scan
+dependency-check-report.json
+findSecBugsReport.xml
