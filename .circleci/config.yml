@@ -108,6 +108,7 @@ workflows:
             - Test
       - Deploy:
           requires:
+            - Security
             - Package
           filters:
             branches:
