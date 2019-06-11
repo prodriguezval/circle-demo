@@ -77,7 +77,10 @@ jobs:
           command: "docker run --name ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_PROJECT_REPONAME}:latest bash -c './mvnw clean package -Dmaven.test.skip=true' && docker cp ${CIRCLE_PROJECT_REPONAME}:/app ."
       - run:
           name: "Running security checks"
-          command:  "cd app && docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
+          command: |
+            docker create -v /application --name app alpine:3.4 /bin/true
+            docker cp app/ app:/application
+            docker run --rm --volumes-from app hawkeyesec/scanner-cli -t /application
   Deploy:
     executor: docker-builder
     steps:
