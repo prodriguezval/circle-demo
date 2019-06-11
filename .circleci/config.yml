@@ -73,14 +73,11 @@ jobs:
           name: "Load archived Docker image"
           command: "docker load -i /tmp/workspace/image.tar"
       - run:
-          name: "Creating docker volume"
-          command: "docker create -v /output --name output alpine:3.4 /bin/true"
-      - run:
           name: "Packaging application"
-          command: "docker run --name ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_PROJECT_REPONAME}:latest bash -c './mvnw clean package -Dmaven.test.skip=true' && docker cp ${CIRCLE_PROJECT_REPONAME}:/app ."
+          command: "docker run --name ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_PROJECT_REPONAME}:latest bash -c './mvnw clean package -Dmaven.test.skip=true' && docker cp ${CIRCLE_PROJECT_REPONAME}:/app/target ."
       - run:
           name: "Running security checks"
-          command:  "pwd && ls -la && docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
+          command:  "ls -la target && docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
   Deploy:
     executor: docker-builder
     steps:
