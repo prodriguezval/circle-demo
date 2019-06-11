@@ -107,12 +107,12 @@ workflows:
       - Test:
           requires:
             - Compile
-      - Package:
-          requires:
-            - Test
       - Security:
           requires:
-            - Package
+            - Test
+      - Package:
+          requires:
+            - Security
       - Deploy:
           requires:
             - Security
