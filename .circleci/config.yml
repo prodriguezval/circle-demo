@@ -66,8 +66,12 @@ jobs:
   Security:
     executor: docker-builder
     steps:
-      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - setup_remote_docker
+      - run:
+          name: "Load archived Docker image"
+          command: "docker load -i /tmp/workspace/image.tar"
       - run:
           name: "Packaging application"
           command: "docker run  -v $PWD:/app ${CIRCLE_PROJECT_REPONAME}:latest ./mvnw clean package -Dmaven.test.skip=true"
