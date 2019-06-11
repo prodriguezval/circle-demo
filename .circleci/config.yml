@@ -77,7 +77,7 @@ jobs:
           command: "docker run  -v $PWD:/app-artifact ${CIRCLE_PROJECT_REPONAME}:latest bash -c './mvnw clean package -Dmaven.test.skip=true && cp -R /app/target/ /app-artifact'"
       - run:
           name: "Running security checks"
-          command:  "docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
+          command:  "pwd && ls -la && docker run --rm -v $PWD:/target hawkeyesec/scanner-cli"
   Deploy:
     executor: docker-builder
     steps:
